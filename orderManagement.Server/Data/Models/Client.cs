@@ -7,6 +7,7 @@ namespace orderManagement.Server.Data.Models
     {
         [Key]
         public int ClientId { get; set; }
+        public string ClientEmail { get; set; }
         public string? Name { get; set; }
         public string Surname { get; set; }
         public string AddressType { get; set; } = "Homeless";

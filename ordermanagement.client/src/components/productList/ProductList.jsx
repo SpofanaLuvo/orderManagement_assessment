@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import "./productList.css";
 
 export default function ProductList() {
     const [products, setProducts] = useState([]);
@@ -15,6 +16,7 @@ export default function ProductList() {
     const [client, setClient] = useState({
         Name: "",
         Surname: "",
+        ClientEmail: "",
         AddressType: "Homeless",
         StreetAddress: "",
         Suburb: "",
@@ -22,9 +24,10 @@ export default function ProductList() {
         PostalCode: "",
     });
 
-    const placeOrder = (newClientId, products, quantity) => {
+    const placeOrder = (newClientId, clientEmail, products, quantity) => {
         const order = {
             ClientId: newClientId,
+            ClientEmail: clientEmail,
             Products: products,
             Quantity: quantity,
         };
@@ -48,15 +51,14 @@ export default function ProductList() {
         });
     };
 
-    const handleFormSubmit = async (event) => {
-        event.preventDefault();
-
+    const handleFormSubmit = async () => {
         axios
             .post(base_url + "Client", client)
             .then((response) => {
                 const latestClientId = response.data.clientId;
                 placeOrder(
                     latestClientId,
+                    client.ClientEmail,
                     selectedProducts,
                     selectedProducts.length
                 );
@@ -65,6 +67,10 @@ export default function ProductList() {
                 console.error(error);
                 // handle error
             });
+
+        alert(
+            "Order has been created, Navigate to My orders to update or cancel the order"
+        );
     };
 
     useEffect(() => {
@@ -121,14 +127,17 @@ export default function ProductList() {
 
     return (
         <>
-            <div>
-                <h1>Product Listingggggggg</h1>
-                <div className='nav'>
+            <div className='shop-container'>
+                <h1>Shop</h1>
+                <div className='shopping-cart'>
                     <div className='cart-section'>
                         <div className='cart-quantity'>
                             {" "}
-                            You have {selectedProducts.length} items in your
-                            shopping cart
+                            You have{" "}
+                            <span className='quantity-amount'>
+                                {selectedProducts.length}
+                            </span>{" "}
+                            items in your shopping cart
                         </div>
                         <button
                             className=' btn cart-toggle'
@@ -139,12 +148,12 @@ export default function ProductList() {
                     </div>
                     <div className={`cart-menu ${isOpen ? "open" : ""}`}>
                         <button
-                            className='btn close-button'
+                            className='close-button'
                             onClick={() => setIsOpen(false)}
                         >
                             X
                         </button>
-                        <h2>Shopping Cart:</h2>
+                        <h2 className='minicart-title'>Shopping Cart:</h2>
                         <ul id='cart-items'>{cartItemsList}</ul>
                         <div className='cart-actions'>
                             <button
@@ -176,7 +185,7 @@ export default function ProductList() {
                                     <div className='product-details'>
                                         <span className='price'>
                                             {" "}
-                                            RRRR {product.price}
+                                            R{product.price}
                                         </span>
                                         <span className='description'>
                                             {product.description}
@@ -207,81 +216,112 @@ export default function ProductList() {
                     <form onSubmit={handleFormSubmit} className='form'>
                         <div className='form-group'>
                             <label htmlFor='Name'>Name:</label>
-                            <input
-                                type='text'
-                                name='Name'
-                                value={client.Name || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className='form-input'>
+                                <input
+                                    type='text'
+                                    name='Name'
+                                    value={client.Name || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                         <div className='form-group'>
                             <label htmlFor='Surname'>Surname:</label>
-                            <input
-                                type='text'
-                                name='Surname'
-                                value={client.Surname || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className='form-input'>
+                                {" "}
+                                <input
+                                    type='text'
+                                    name='Surname'
+                                    value={client.Surname || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+                        <div className='form-group'>
+                            <label htmlFor='Email'>Email:</label>
+                            <div className='form-input'>
+                                {" "}
+                                <input
+                                    type='text'
+                                    name='ClientEmail'
+                                    value={client.ClientEmail || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                         <div className='form-group'>
                             <label htmlFor='AddressType'>Address Type:</label>
-                            <select
-                                name='AddressType'
-                                value={client.AddressType}
-                                onChange={handleInputChange}
-                            >
-                                <option value='Homeless'>Homeless</option>
-                                <option value='Residential'>Residential</option>
-                                <option value='Commercial'>Commercial</option>
-                            </select>
+                            <div className='form-input'>
+                                <select
+                                    name='AddressType'
+                                    value={client.AddressType}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value='Homeless'>Homeless</option>
+                                    <option value='Residential'>
+                                        Residential
+                                    </option>
+                                    <option value='Commercial'>
+                                        Commercial
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                         <div className='form-group'>
                             <label htmlFor='StreetAddress'>
                                 Street Address:
                             </label>
-                            <input
-                                type='text'
-                                name='StreetAddress'
-                                value={client.StreetAddress || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className='form-input'>
+                                <input
+                                    type='text'
+                                    name='StreetAddress'
+                                    value={client.StreetAddress || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                         <div className='form-group'>
                             <label htmlFor='Suburb'>Suburb:</label>
-                            <input
-                                type='text'
-                                name='Suburb'
-                                value={client.Suburb || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className='form-input'>
+                                <input
+                                    type='text'
+                                    name='Suburb'
+                                    value={client.Suburb || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                         <div className='form-group'>
                             {" "}
                             <label htmlFor='City'>City:</label>
-                            <input
-                                type='text'
-                                name='City'
-                                value={client.City || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className='form-input'>
+                                <input
+                                    type='text'
+                                    name='City'
+                                    value={client.City || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
                         <div className='form-group'>
                             <label htmlFor='PostalCode'>Postal Code:</label>
-                            <input
-                                type='text'
-                                name='PostalCode'
-                                value={client.PostalCode || ""}
-                                onChange={handleInputChange}
-                            />
+                            <div className='form-input'>
+                                <input
+                                    type='text'
+                                    name='PostalCode'
+                                    value={client.PostalCode || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
-                        <button className='btn form-submit' type='submit'>
-                            Submit
-                        </button>
+                        <div className='form-actions'>
+                            <button className='btn form-submit' type='submit'>
+                                Submit
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </>
     );
-
-    // https://www.youtube.com/watch?v=EJgzPBO2juM&t=320s
 }
